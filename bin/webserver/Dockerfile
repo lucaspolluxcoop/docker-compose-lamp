@@ -11,7 +11,6 @@ RUN apt-get -y update --fix-missing && \
     apt-get --no-install-recommends install -y apt-utils && \
     rm -rf /var/lib/apt/lists/*
 
-
 # Install useful tools and install important libaries
 RUN apt-get -y update && \
     apt-get -y --no-install-recommends install nano wget dialog libsqlite3-dev libsqlite3-0 && \
@@ -21,66 +20,6 @@ RUN apt-get -y update && \
     apt-get -y --no-install-recommends install --fix-missing libssl-dev python && \ 
     rm -rf /var/lib/apt/lists/* && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-
-###########################################################################
-# Node / NVM:
-###########################################################################
-
-# Check if NVM needs to be installed
-ARG NODE_VERSION=node
-ENV NODE_VERSION ${NODE_VERSION}
-ARG INSTALL_NODE=false
-ARG INSTALL_NPM_GULP=false
-ARG INSTALL_NPM_BOWER=false
-ARG INSTALL_NPM_VUE_CLI=false
-ARG INSTALL_NPM_ANGULAR_CLI=false
-ARG NPM_REGISTRY
-ENV NPM_REGISTRY ${NPM_REGISTRY}
-# install nodejs using nvm
-ENV NVM_DIR /usr/local/nvm
-ARG NVM_NODEJS_ORG_MIRROR
-ENV NVM_NODEJS_ORG_MIRROR ${NVM_NODEJS_ORG_MIRROR}
-
-# Replace shell with bash so we can source files
-
-RUN if [ ${INSTALL_NODE} = true ]; then \
-    # Install nvm (A Node Version Manager)
-    rm /bin/sh && ln -s /bin/bash /bin/sh && \
-    mkdir -p $NVM_DIR && \
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash \
-        && . $NVM_DIR/nvm.sh \
-        && nvm install ${NODE_VERSION} \
-        && nvm use ${NODE_VERSION} \
-        && nvm alias ${NODE_VERSION} \
-        && if [ ${NPM_REGISTRY} ]; then \
-        npm config set registry ${NPM_REGISTRY} \
-        ;fi \
-        && if [ ${INSTALL_NPM_GULP} = true ]; then \
-        npm install -g gulp \
-        ;fi \
-        && if [ ${INSTALL_NPM_BOWER} = true ]; then \
-        npm install -g bower \
-        ;fi \
-        && if [ ${INSTALL_NPM_VUE_CLI} = true ]; then \
-        npm install -g @vue/cli \
-        ;fi \
-        && if [ ${INSTALL_NPM_ANGULAR_CLI} = true ]; then \
-        npm install -g @angular/cli \
-        ;fi \
-        && ln -s `npm bin --global` /home/laradock/.node-bin \
-;fi
-
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
-
-# Install Npm 
-RUN curl -o- https://npmjs.org/install.sh | bash
-
-###########################################################################
-# Node / NVM:
-###########################################################################
-
 
 # Install xdebug
 RUN pecl install xdebug-2.7.2 && \
