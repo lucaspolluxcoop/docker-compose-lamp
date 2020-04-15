@@ -7,9 +7,6 @@ WORKDIR $CONTAINER_PATH
 # install nodemon globally
 RUN npm install -g nodemon
 
-#ENV PORT 3000
-#ENV PORT 8080
-
 EXPOSE 3000
 EXPOSE 8080
 
