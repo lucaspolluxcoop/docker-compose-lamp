@@ -16,6 +16,18 @@ services:
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+  nodeserver:
+    build:
+      context: ./bin/nodeserver
+    container_name: 'nodeserver'
+    links:
+      - webserver
+    ports:
+      - "${HOST_MACHINE_VUE_HOST_PORT}:8080"
+      - "${HOST_MACHINE_NUXT_HOST_PORT}:3000"
+    volumes:
+      - ${DOCUMENT_ROOT-./www}:/var/www/html
+    command: tail -f /dev/null
   mysql:
     build:
       context: "./bin/${DATABASE}"
@@ -45,7 +57,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - '8080:80'
+      - '${HOST_MACHINE_PHPMYADMIN_HOST_PORT}:80'
     volumes: 
       - /sessions
   redis:
