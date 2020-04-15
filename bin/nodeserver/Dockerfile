@@ -1,9 +1,12 @@
 FROM node:latest
 
-# install nodemon globally
-RUN npm install nodemon -g
+ENV CONTAINER_PATH /var/www/html
 
-WORKDIR /var/www/html
+WORKDIR $CONTAINER_PATH
+
+# install nodemon globally
+RUN npm install -g nodemon
+
 #ENV PORT 3000
 #ENV PORT 8080
 

@@ -16,10 +16,14 @@ services:
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+    networks:
+      - app-network
   nodeserver:
     build:
       context: ./bin/nodeserver
     container_name: 'nodeserver'
+    restart: unless-stopped
+    tty: true
     links:
       - webserver
     ports:
@@ -27,6 +31,8 @@ services:
       - "${HOST_MACHINE_NUXT_HOST_PORT}:3000"
     volumes:
       - ${DOCUMENT_ROOT-./www}:/var/www/html
+    networks:
+      - app-network
     command: tail -f /dev/null
   mysql:
     build:
@@ -43,6 +49,8 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - app-network
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: 'sc-phpmyadmin'
@@ -60,8 +68,14 @@ services:
       - '${HOST_MACHINE_PHPMYADMIN_HOST_PORT}:80'
     volumes: 
       - /sessions
+    networks:
+      - app-network
   redis:
     container_name: 'sc-redis'
     image: redis:latest
     ports:
       - "${HOST_MACHINE_REDIS_PORT}:6379"
+
+networks:
+  app-network:
+    driver: bridge
