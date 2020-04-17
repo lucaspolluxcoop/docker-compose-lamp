@@ -38,11 +38,12 @@ services:
   mysql:
     build:
       context: "./bin/${DATABASE}"
-    container_name: '5.7-mysql'
+    container_name: '8.0-mysql'
     restart: 'always'
     ports:
       - "${HOST_MACHINE_MYSQL_PORT}:3306"
     volumes: 
+      - ${MYSQL_CONFIG_DIR-./config/mysql}:/etc/mysql/conf.d
       - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
       - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
     environment:
