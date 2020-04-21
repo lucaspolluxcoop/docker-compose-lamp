@@ -77,6 +77,8 @@ services:
     image: redis:latest
     ports:
       - "${HOST_MACHINE_REDIS_PORT}:6379"
+    networks:
+      - app-network
 
 networks:
   app-network:

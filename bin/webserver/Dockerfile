@@ -21,6 +21,10 @@ RUN apt-get -y update && \
     rm -rf /var/lib/apt/lists/* && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Install soap
+RUN apt-get install -y libxml2-dev && \
+    docker-php-ext-install soap  
+
 # Install xdebug
 RUN pecl install xdebug-2.7.2 && \
     docker-php-ext-enable xdebug
