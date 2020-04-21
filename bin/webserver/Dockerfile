@@ -22,8 +22,7 @@ RUN apt-get -y update && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install soap
-RUN apt-get install -y libxml2-dev && \
-    docker-php-ext-install soap  
+RUN apt-get update && apt-get install -y libxml2-dev && docker-php-ext-install soap
 
 # Install xdebug
 RUN pecl install xdebug-2.7.2 && \
@@ -55,7 +54,14 @@ RUN apt-get -y update && \
 # Enable apache modules
 RUN a2enmod rewrite headers
 
+# Add user for web applications
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
+
 EXPOSE 8000
 
 # Cleanup
 RUN rm -rf /usr/src/*
+
+# Change current user to www
+USER www
