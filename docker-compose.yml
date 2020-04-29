@@ -21,6 +21,31 @@ services:
     command: tail -f /dev/null
     networks:
       - app-network
+  
+  elasticsearch:
+    build:
+      context: ./bin/elasticsearch
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=docker-cluster
+      - discovery.type=single-node
+      #- discovery.seed_hosts=elasticsearch
+      #- cluster.initial_master_nodes=elasticsearch
+      #- bootstrap.memory_lock=true
+      #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock: -1
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - app-network
+
   nodeserver:
     build:
       context: ./bin/nodeserver
@@ -37,6 +62,7 @@ services:
     networks:
       - app-network
     command: tail -f /dev/null
+
   mysql:
     build:
       context: "./bin/${DATABASE}"
@@ -55,6 +81,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - app-network
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: 'sc-phpmyadmin'
