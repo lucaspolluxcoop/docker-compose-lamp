@@ -58,6 +58,11 @@ RUN a2enmod rewrite headers
 RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 
+
+RUN apt-get update && apt-get -y install sudo
+
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
 EXPOSE 8000
 
 # Cleanup
