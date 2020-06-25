@@ -32,6 +32,22 @@ RUN pecl install xdebug-2.7.2 && \
 RUN pecl install redis-5.0.2 && \
     docker-php-ext-enable redis
 
+#Install ImageMagick
+RUN apt-get update && apt-get install libmagick++-dev -y && pecl install imagick
+
+#### Dependencies for laravel-snappy package Generate PDF
+
+RUN apt-get update && apt-get install -y \
+    libxrender1 \
+    libfontconfig1 \
+    libx11-dev \
+    libjpeg62 \
+    libxtst6 \
+    && wget https://github.com/h4cc/wkhtmltopdf-amd64/blob/master/bin/wkhtmltopdf-amd64?raw=true -O /usr/local/bin/wkhtmltopdf \
+    && chmod +x /usr/local/bin/wkhtmltopdf \
+    && wget https://github.com/h4cc/wkhtmltoimage-amd64/blob/master/bin/wkhtmltoimage-amd64?raw=true -O /usr/local/bin/wkhtmltoimage \
+    && chmod +x /usr/local/bin/wkhtmltoimage
+
 # Other PHP7 Extensions
 RUN docker-php-ext-install pdo_mysql && \
     docker-php-ext-install pdo_sqlite && \
