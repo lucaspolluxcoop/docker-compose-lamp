@@ -4,7 +4,7 @@ services:
   webserver:
     build: 
       context: ./bin/webserver
-    container_name: '7.3.x-webserver'
+    container_name: 'tunota-webserver'
     restart: unless-stopped
     tty: true
     ports:
@@ -18,38 +18,13 @@ services:
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2
-    command: tail -f /dev/null
-    networks:
-      - app-network
-  
-  elasticsearch:
-    build:
-      context: ./bin/elasticsearch
-    container_name: elasticsearch
-    environment:
-      - node.name=elasticsearch
-      - cluster.name=docker-cluster
-      - discovery.type=single-node
-      #- discovery.seed_hosts=elasticsearch
-      #- cluster.initial_master_nodes=elasticsearch
-      #- bootstrap.memory_lock=true
-      #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock: -1
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - ./data/elasticsearch:/usr/share/elasticsearch/data
     networks:
       - app-network
 
   nodeserver:
     build:
       context: ./bin/nodeserver
-    container_name: 'nodeserver'
+    container_name: 'tunota-nodeserver'
     restart: unless-stopped
     tty: true
     links:
@@ -68,7 +43,7 @@ services:
   mysql:
     build:
       context: "./bin/${DATABASE}"
-    container_name: '8.0-mysql'
+    container_name: 'tunota-mysql'
     restart: 'always'
     ports:
       - "${HOST_MACHINE_MYSQL_PORT}:3306"
@@ -86,7 +61,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: 'sc-phpmyadmin'
+    container_name: 'tunota-phpmyadmin'
     links:
       - mysql
     environment:
@@ -104,7 +79,7 @@ services:
     networks:
       - app-network
   redis:
-    container_name: 'sc-redis'
+    container_name: 'tunota-redis'
     image: redis:latest
     ports:
       - "${HOST_MACHINE_REDIS_PORT}:6379"
